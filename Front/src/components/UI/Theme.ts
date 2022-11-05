@@ -11,15 +11,11 @@ declare module "@mui/material/styles" {
     }
     interface TypographyVariantsOptions {
         tab: React.CSSProperties;
+        estimate: React.CSSProperties;
     }
     interface TypographyVariants {
         tab: React.CSSProperties;
-    }
-}
-
-declare module "@mui/material/Typography" {
-    interface TypographyPropsVariantOverrides {
-        tab: {};
+        estimate: React.CSSProperties;
     }
 }
 
@@ -39,8 +35,12 @@ export default createTheme({
     typography: {        
         tab: {            
             textTransform: "none",
-            color: blue[50],
+            color: blue[100],
             fontSize: "1rem"
+        },
+        estimate: {
+            color: "white",
+            borderRadius: "40px"
         }
     }
 });
