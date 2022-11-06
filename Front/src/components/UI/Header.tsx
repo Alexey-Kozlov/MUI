@@ -1,5 +1,6 @@
 ﻿import { AppBar, Button, Tab, Tabs, ThemeProvider, Toolbar } from "@mui/material";
-import { useState } from "react";
+import {  useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import Theme from "./Theme";
 import themeActiveTab from './ThemeActiveTab';
@@ -15,37 +16,46 @@ const buttonStyle = {
     ...Theme.typography.estimate,
     margin: "0 25px 0"
 }
-const tabActive = {
-    bgcolor:"white"
+const logoContainer = {
+    padding: 0
 }
 
-export default function Header(props: any) {
+export default function Header() {
+    const getActiveTab = (url: string) => {
+        let currentTabNumber = 0;
+        switch (url) {
+            case "/": currentTabNumber = 0; break;
+            case "/services": currentTabNumber = 1; break;
+            case "/revolution": currentTabNumber = 2; break;
+            case "/about": currentTabNumber = 3; break;
+            case "/contacts": currentTabNumber = 4; break;
+        }
+        return currentTabNumber;
+    }
 
-    const [tadState, setTabState] = useState(0);
-
-    const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
-        setTabState(newTabValue);
-    };
+    let url = useLocation();
+    const [tabState, setTabState] = useState(getActiveTab(url.pathname));
 
     return (
         <>
             <AppBar position="fixed">
                 <Toolbar disableGutters>
-                    <img src={logo.toString()} alt="" style={imageStyle} />
+                    <Button href="/" style={logoContainer} disableRipple>
+                        <img src={logo.toString()} alt="" style={imageStyle} />
+                    </Button>
                     <ThemeProvider theme={themeActiveTab}>
-                    <Tabs
+                        <Tabs
                             sx={{ ml: "auto" }}
-                            value={tadState}
-                            onChange={handleTabChange}
+                            value={tabState}
                             textColor="primary"
                             indicatorColor="primary"
-                            TabIndicatorProps={{ sx: {height:"5px"} }}
+                            TabIndicatorProps={{ sx: { height: "5px" } }}
                         >
-                        <Tab  label="Домой" sx={tabStyle} />
-                        <Tab label="Сервисы" sx={tabStyle} />
-                        <Tab label="Революция" sx={tabStyle} />
-                        <Tab label="О нас" sx={tabStyle} />
-                        <Tab label="Контакты" sx={tabStyle} />
+                            <Tab label="Домой" sx={tabStyle} href="/" />
+                            <Tab label="Сервисы" sx={tabStyle} href="/services" />
+                            <Tab label="Революция" sx={tabStyle} href="/revolution" />
+                            <Tab label="О нас" sx={tabStyle} href="/about" />
+                            <Tab label="Контакты" sx={tabStyle} href="/contacts" />
                         </Tabs>
                     </ThemeProvider>
                     <Button variant="contained" color="secondary" style={buttonStyle}>Тест</Button>
