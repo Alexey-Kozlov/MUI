@@ -18,8 +18,8 @@ function App() {
                     <Route path="/" element={<Stack sx={{ mt: "90px" }} >Домой</Stack>} />
                     <Route path="/services" element={<Stack sx={{ mt: "90px" }} >Сервисы</Stack>} />
                     <Route path="/customsoftware" element={<Stack sx={{ mt: "90px" }} >ПО</Stack>} />
-                    <Route path="/mobileapps" element={<div>Мобильное приложение</div>} />
-                    <Route path="/websites" element={<div>Сайты</div>} />
+                    <Route path="/mobileapps" element={<Stack sx={{ mt: "90px" }} >Мобильное приложение</Stack>} />
+                    <Route path="/websites" element={<Stack sx={{ mt: "90px" }} >Сайты</Stack>} />
                     <Route path="/revolution" element={<Stack sx={{ mt: "90px" }} >Революция</Stack>} />
                     <Route path="/about" element={<div><Stack sx={{ mt: "90px" }} >О нас</Stack></div>} />
                     <Route path="/contacts" element={<Stack sx={{ mt: "90px" }} >Контакты</Stack>} />
