@@ -19,6 +19,11 @@ const buttonStyle = {
 const logoContainer = {
     padding: 0
 }
+const menuStyle = {
+    popOverRoot: {
+        pointerEvents: "none"
+    }
+}
 
 export default function Header() {
     let currentMenu = {
@@ -26,6 +31,7 @@ export default function Header() {
         menuIndex: 0
     }
     const getActiveTab = (url: string) => {
+        currentMenu.menuIndex = -1;
         switch (url) {
             case "/":
                 currentMenu.tabNumber = 0;
@@ -46,7 +52,6 @@ export default function Header() {
                 currentMenu.tabNumber = 1;
                 currentMenu.menuIndex = 3;
                 break;
-                break;
             case "/revolution":
                 currentMenu.tabNumber = 2;
                 break;
@@ -60,19 +65,32 @@ export default function Header() {
         return currentMenu;
     }
 
-    let url = useLocation();
-    const [tabState, setTabState] = useState(getActiveTab(url.pathname).tabNumber);
+    const url = useLocation();
+    const _tabState = getActiveTab(url.pathname);
+    const [tabState, setTabState] = useState(_tabState.tabNumber);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedIndex, setSelectedIndex] = useState(getActiveTab(url.pathname).menuIndex);
-
-    const open = Boolean(anchorEl);
+    const [selectedIndex, setSelectedIndex] = useState(_tabState.menuIndex);
+    let currentlyHovering = false;
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+        if (anchorEl !== event.currentTarget) {
+            setAnchorEl(event.currentTarget);
+        }
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+    function handleHover() {
+        currentlyHovering = true;
+    }
+    function handleCloseHover() {
+        currentlyHovering = false;
+        setTimeout(() => {
+            if (!currentlyHovering) {
+                handleClose();
+            }
+        }, 50);
+    }
 
     return (
         <>
@@ -91,13 +109,14 @@ export default function Header() {
                         >
                             <Tab label="Домой" sx={tabStyle} href="/" />
                             <Tab
-                                id="serviceTab"
                                 label="Сервисы"
                                 sx={tabStyle}
-                                aria-owns={open ? 'serviceMenu' : undefined}
+                                aria-owns={anchorEl ? 'serviceMenu' : undefined}                               
                                 aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                                href="/services"
                                 onMouseOver={handleClick}
+                                onMouseLeave={handleCloseHover}
                             />
                             <Tab label="Революция" sx={tabStyle} href="/revolution" />
                             <Tab label="О нас" sx={tabStyle} href="/about" />
@@ -108,9 +127,16 @@ export default function Header() {
                     <Menu
                         id="serviceMenu"
                         anchorEl={anchorEl}
-                        open={open}
+                        open={Boolean(anchorEl)}
                         onClose={handleClose}
-                        MenuListProps={{ onMouseLeave: handleClose }}
+                        MenuListProps={{
+                            onMouseEnter: handleHover,
+                            onMouseLeave: handleCloseHover,
+                            style: { pointerEvents: "auto" }
+                        }}
+                        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                        sx={menuStyle.popOverRoot}
+                        keepMounted
                     >
                         <MenuItem selected={selectedIndex === 0}
                             onClick={handleClose} component='a' href="/services">Сервисы</MenuItem>
