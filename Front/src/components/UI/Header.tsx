@@ -1,31 +1,56 @@
-﻿import { AppBar, Button, Divider, Menu, MenuItem, Tab, Tabs, ThemeProvider, Toolbar } from "@mui/material";
-import { MouseEventHandler, useEffect, useState } from "react";
+﻿import { AppBar, Button, IconButton, Menu, MenuItem, SwipeableDrawer, Tab, Tabs, ThemeProvider, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import Theme from "./Theme";
 import themeActiveTab from './ThemeActiveTab';
+import { Menu as MenuIcon } from '@mui/icons-material';
 
-const imageStyle = {
-    height: "64px"
-}
-const tabStyle = {
-    ...Theme.typography.tab,
-    minWidth: 10
-}
-const buttonStyle = {
-    ...Theme.typography.estimate,
-    margin: "0 25px 0"
-}
-const logoContainer = {
-    padding: 0
-}
-const menuStyle = {
-    popOverRoot: {
-        pointerEvents: "none"
-    }
-}
 
 export default function Header() {
+
+    const theme = useTheme();
+    const matches_md = useMediaQuery(theme.breakpoints.down("md"));
+    const matches_sm = useMediaQuery(theme.breakpoints.down("sm"));
+    const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+
+
+    const logoStyle = () => {
+        let rez = {};
+        if (!matches_md) {
+            rez = { height: "64px" }
+        } else if (!matches_sm) {
+            rez = { height: "48px" }
+        } else {
+            rez = { height: "32px" }
+        }
+        return rez;
+    }
+
+    const tabStyle = {
+        ...Theme.typography.tab,
+        minWidth: 10
+    }
+    const buttonStyle = {
+        ...Theme.typography.estimate,
+        margin: "0 25px 0"
+    }
+    const logoContainer = {
+        padding: 0
+    }
+    const menuStyle = {
+        popOverRoot: {
+            pointerEvents: "none"
+        }
+    }
+    const drawerIconContainer = {
+        marginLeft: "auto",
+        "&:hover": {
+            ...Theme.typography.estimate
+        }
+    }
+
     let currentMenu = {
         tabNumber: 0,
         menuIndex: 0
@@ -70,6 +95,8 @@ export default function Header() {
     const [tabState, setTabState] = useState(_tabState.tabNumber);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedIndex, setSelectedIndex] = useState(_tabState.menuIndex);
+    const [openDrawer, setOpenDrawer] = useState(false);
+
     let currentlyHovering = false;
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -92,69 +119,93 @@ export default function Header() {
         }, 50);
     }
 
+    const tabs = (    
+        <React.Fragment>
+            <ThemeProvider theme={themeActiveTab}>
+            <Tabs
+                sx={{ ml: "auto" }}
+                value={tabState}
+                textColor="primary"
+                indicatorColor="primary"
+                TabIndicatorProps={{ sx: { height: "5px" } }}
+            >
+                <Tab label="Домой" sx={tabStyle} href="/" />
+                <Tab
+                    label="Сервисы"
+                    sx={tabStyle}
+                    aria-owns={anchorEl ? 'serviceMenu' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                    href="/services"
+                    onMouseOver={handleClick}
+                    onMouseLeave={handleCloseHover}
+                />
+                <Tab label="Революция" sx={tabStyle} href="/revolution" />
+                <Tab label="О нас" sx={tabStyle} href="/about" />
+                <Tab label="Контакты" sx={tabStyle} href="/contacts" />
+            </Tabs>
+
+            <Button variant="contained" style={buttonStyle}>Тест</Button>
+
+            <Menu
+                id="serviceMenu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                MenuListProps={{
+                    onMouseEnter: handleHover,
+                    onMouseLeave: handleCloseHover,
+                    style: { pointerEvents: "auto" }
+                }}
+                anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                sx={menuStyle.popOverRoot}
+                keepMounted
+                PaperProps={{
+                    sx: {
+                        backgroundColor: Theme.palette.common.blue,
+                        color: "white",
+                        borderRadius: "0px"
+                    }
+                }}
+                disableAutoFocusItem={true}
+            >
+                <MenuItem selected={selectedIndex === 0}
+                    onClick={handleClose} component='a' href="/services">Сервисы</MenuItem>
+                <MenuItem selected={selectedIndex === 1}
+                    onClick={handleClose} component='a' href="/customsoftware">ПО</MenuItem>
+                <MenuItem selected={selectedIndex === 2}
+                    onClick={handleClose} component='a' href="/mobileapps">Мобильное приложение</MenuItem>
+                <MenuItem selected={selectedIndex === 3}
+                    onClick={handleClose} component='a' href="/websites">Сайты</MenuItem>
+            </Menu>
+            </ThemeProvider>
+    </React.Fragment>
+    )
+
+    const drawer = (
+        <>
+            <SwipeableDrawer disableBackdropTransition={!iOS} open={openDrawer}
+                onClose={() => {
+                    setOpenDrawer(false)
+                }}
+                onOpen={() => setOpenDrawer(true)}
+            >
+                Что то внутри
+            </SwipeableDrawer>
+            <IconButton onClick={() => setOpenDrawer(!openDrawer)} sx={drawerIconContainer}>
+                <MenuIcon />
+            </IconButton>
+        </>
+    )
+
     return (
         <>
-            <AppBar position="fixed">
-                <Toolbar disableGutters>
+            <AppBar position="fixed" sx={logoStyle()}>
+                <Toolbar disableGutters style={{ minHeight: "0px" }}>
                     <Button href="/" style={logoContainer} disableRipple>
-                        <img src={logo.toString()} alt="" style={imageStyle} />
+                        <img src={logo.toString()} alt="" style={logoStyle()} />
                     </Button>
-                    <ThemeProvider theme={themeActiveTab}>
-                        <Tabs
-                            sx={{ ml: "auto" }}
-                            value={tabState}
-                            textColor="primary"
-                            indicatorColor="primary"
-                            TabIndicatorProps={{ sx: { height: "5px" } }}
-                        >
-                            <Tab label="Домой" sx={tabStyle} href="/" />
-                            <Tab
-                                label="Сервисы"
-                                sx={tabStyle}
-                                aria-owns={anchorEl ? 'serviceMenu' : undefined}
-                                aria-haspopup="true"
-                                onClick={handleClick}
-                                href="/services"
-                                onMouseOver={handleClick}
-                                onMouseLeave={handleCloseHover}
-                            />
-                            <Tab label="Революция" sx={tabStyle} href="/revolution" />
-                            <Tab label="О нас" sx={tabStyle} href="/about" />
-                            <Tab label="Контакты" sx={tabStyle} href="/contacts" />
-                        </Tabs>
-
-                        <Button variant="contained" color="secondary" style={buttonStyle}>Тест</Button>
-                        <Menu
-                            id="serviceMenu"
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            MenuListProps={{
-                                onMouseEnter: handleHover,
-                                onMouseLeave: handleCloseHover,
-                                style: { pointerEvents: "auto" }
-                            }}
-                            anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-                            sx={menuStyle.popOverRoot}
-                            keepMounted
-                            PaperProps={{
-                                sx: {
-                                    backgroundColor: Theme.palette.common.blue,
-                                    color: "white"
-                                }
-                            }}
-                            disableAutoFocusItem={true}
-                        >
-                            <MenuItem selected={selectedIndex === 0}
-                                onClick={handleClose} component='a' href="/services">Сервисы</MenuItem>
-                            <MenuItem selected={selectedIndex === 1}
-                                onClick={handleClose} component='a' href="/customsoftware">ПО</MenuItem>
-                            <MenuItem selected={selectedIndex === 2}
-                                onClick={handleClose} component='a' href="/mobileapps">Мобильное приложение</MenuItem>
-                            <MenuItem selected={selectedIndex === 3}
-                                onClick={handleClose} component='a' href="/websites">Сайты</MenuItem>
-                        </Menu>
-                    </ThemeProvider>
+                    {matches_md ? drawer : tabs}
                 </Toolbar>
             </AppBar>
 

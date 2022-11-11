@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { blue } from "@mui/material/colors";
+import { blue, orange } from "@mui/material/colors";
 
 const arcBlue: string = "#0B72B9";
 const arcOrange: string = "#FFBA60";
@@ -40,7 +40,8 @@ export default createTheme({
         },
         estimate: {
             color: "white",
-            borderRadius: "40px"
+            borderRadius: "40px",
+            backgroundColor: `${arcOrange}`
         }
     }
 });
