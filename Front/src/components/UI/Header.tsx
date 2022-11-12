@@ -1,10 +1,11 @@
-﻿import { AppBar, Button, IconButton, Menu, MenuItem, SwipeableDrawer, Tab, Tabs, ThemeProvider, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+﻿import { AppBar, Button, ButtonProps, IconButton, List, ListItem, ListItemText, Menu, MenuItem, SwipeableDrawer, Tab, Tabs, ThemeProvider, Toolbar, useMediaQuery, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import Theme from "./Theme";
 import themeActiveTab from './ThemeActiveTab';
 import { Menu as MenuIcon } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 
 
 export default function Header() {
@@ -32,10 +33,7 @@ export default function Header() {
         ...Theme.typography.tab,
         minWidth: 10
     }
-    const buttonStyle = {
-        ...Theme.typography.estimate,
-        margin: "0 25px 0"
-    }
+
     const logoContainer = {
         padding: 0
     }
@@ -46,6 +44,7 @@ export default function Header() {
     }
     const drawerIconContainer = {
         marginLeft: "auto",
+        color: "white",
         "&:hover": {
             ...Theme.typography.estimate
         }
@@ -53,10 +52,12 @@ export default function Header() {
 
     let currentMenu = {
         tabNumber: 0,
-        menuIndex: 0
+        menuIndex: 0,
+        isTabs: true
     }
     const getActiveTab = (url: string) => {
-        currentMenu.menuIndex = -1;
+        currentMenu.menuIndex = 0;
+        currentMenu.tabNumber = 0;
         switch (url) {
             case "/":
                 currentMenu.tabNumber = 0;
@@ -86,9 +87,21 @@ export default function Header() {
             case "/contacts":
                 currentMenu.tabNumber = 4;
                 break;
+            case "/estimate":
+                currentMenu.isTabs = false;
+                break;
+            default:
+                break;
         }
         return currentMenu;
     }
+
+    const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
+        margin: "0 25px 0",
+        "&:hover": {
+            ...Theme.typography.estimate
+        }
+    }));
 
     const url = useLocation();
     const _tabState = getActiveTab(url.pathname);
@@ -119,15 +132,21 @@ export default function Header() {
         }, 50);
     }
 
+    const indicatorHiddenStyle = () => {
+        let style = { height: "5px", transition: "none", display: "" }
+        currentMenu.isTabs ? style.display = "" : style.display = "none";
+        return style;
+    }
+
     const tabs = (    
         <React.Fragment>
             <ThemeProvider theme={themeActiveTab}>
-            <Tabs
-                sx={{ ml: "auto" }}
-                value={tabState}
-                textColor="primary"
-                indicatorColor="primary"
-                TabIndicatorProps={{ sx: { height: "5px" } }}
+                <Tabs
+                    sx={{ ml: "auto" }}
+                    value={tabState}
+                    textColor="primary"
+                    indicatorColor="primary"
+                    TabIndicatorProps={{ sx: indicatorHiddenStyle() }}
             >
                 <Tab label="Домой" sx={tabStyle} href="/" />
                 <Tab
@@ -145,7 +164,9 @@ export default function Header() {
                 <Tab label="Контакты" sx={tabStyle} href="/contacts" />
             </Tabs>
 
-            <Button variant="contained" style={buttonStyle}>Тест</Button>
+                <ColorButton variant="outlined"
+                    sx={currentMenu.isTabs ? tabStyle : Theme.typography.estimate}
+                    href="/estimate">Оценка</ColorButton>
 
             <Menu
                 id="serviceMenu"
@@ -190,7 +211,26 @@ export default function Header() {
                 }}
                 onOpen={() => setOpenDrawer(true)}
             >
-                Что то внутри
+                <List>
+                    <ListItem button component='a' href="/">
+                        <ListItemText>Домой</ListItemText>
+                    </ListItem>
+                    <ListItem button component='a' href="/services">
+                        <ListItemText>Сервисы</ListItemText>
+                    </ListItem>
+                    <ListItem button component='a' href="/revolution">
+                        <ListItemText>Революция</ListItemText>
+                    </ListItem>
+                    <ListItem button component='a' href="/about">
+                        <ListItemText>О нас</ListItemText>
+                    </ListItem>
+                    <ListItem button component='a' href="/contacts">
+                        <ListItemText>Контакты</ListItemText>
+                    </ListItem>
+                    <ListItem button component='a' href="/estimate">
+                        <ListItemText>Оценка</ListItemText>
+                    </ListItem>
+                </List>
             </SwipeableDrawer>
             <IconButton onClick={() => setOpenDrawer(!openDrawer)} sx={drawerIconContainer}>
                 <MenuIcon />

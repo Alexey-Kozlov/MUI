@@ -21,9 +21,9 @@ function App() {
                     <Route path="/mobileapps" element={<Stack sx={{ mt: "90px" }} >Мобильное приложение</Stack>} />
                     <Route path="/websites" element={<Stack sx={{ mt: "90px" }} >Сайты</Stack>} />
                     <Route path="/revolution" element={<Stack sx={{ mt: "90px" }} >Революция</Stack>} />
-                    <Route path="/about" element={<div><Stack sx={{ mt: "90px" }} >О нас</Stack></div>} />
+                    <Route path="/about" element={<Stack sx={{ mt: "90px" }} >О нас</Stack>} />
                     <Route path="/contacts" element={<Stack sx={{ mt: "90px" }} >Контакты</Stack>} />
-                    <Route path="/estimate" element={<div>Оценка</div>} />
+                    <Route path="/estimate" element={<Stack sx={{ mt: "90px" }} >Оценка</Stack>} />
                 </Routes>
             </ThemeProvider>
         </BrowserRouter>

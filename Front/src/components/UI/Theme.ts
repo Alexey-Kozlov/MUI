@@ -36,12 +36,15 @@ export default createTheme({
         tab: {            
             textTransform: "none",
             color: blue[100],
-            fontSize: "1rem"
+            fontSize: "1rem",
+            borderRadius: "40px"
         },
         estimate: {
             color: "white",
             borderRadius: "40px",
-            backgroundColor: `${arcOrange}`
+            backgroundColor: `${arcOrange}`,
+            fontSize: "1rem",
+            textTransform: "none"
         }
     }
 });
