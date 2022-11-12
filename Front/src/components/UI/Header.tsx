@@ -1,11 +1,13 @@
 ﻿import { AppBar, Button, ButtonProps, IconButton, List, ListItem, ListItemText, Menu, MenuItem, SwipeableDrawer, Tab, Tabs, ThemeProvider, Toolbar, useMediaQuery, useTheme } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import Theme from "./Theme";
 import themeActiveTab from './ThemeActiveTab';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import { blue } from "@mui/material/colors";
+import important from "../../helpers/important";
 
 
 export default function Header() {
@@ -18,13 +20,25 @@ export default function Header() {
 
 
     const logoStyle = () => {
-        let rez = {};
+        let rez = { height: "", zIndex: theme.zIndex.modal +1 };
         if (!matches_md) {
-            rez = { height: "64px" }
+            rez.height = "64px";
         } else if (!matches_sm) {
-            rez = { height: "48px" }
+            rez.height = "48px";
         } else {
-            rez = { height: "32px" }
+            rez.height = "32px";
+        }
+        return rez;
+    }
+
+    const drawerMargin = () => {
+        let rez = { marginTop: "" };
+        if (!matches_md) {
+            rez.marginTop = "64px";
+        } else if (!matches_sm) {
+            rez.marginTop = "48px";
+        } else {
+            rez.marginTop = "32px";
         }
         return rez;
     }
@@ -39,7 +53,8 @@ export default function Header() {
     }
     const menuStyle = {
         popOverRoot: {
-            pointerEvents: "none"
+            pointerEvents: "none",
+            zIndex: 1302
         }
     }
     const drawerIconContainer = {
@@ -87,10 +102,8 @@ export default function Header() {
             case "/contacts":
                 currentMenu.tabNumber = 4;
                 break;
-            case "/estimate":
-                currentMenu.isTabs = false;
-                break;
             default:
+                currentMenu.isTabs = false;
                 break;
         }
         return currentMenu;
@@ -132,21 +145,33 @@ export default function Header() {
         }, 50);
     }
 
-    const indicatorHiddenStyle = () => {
+    const tabIndicatorHiddenStyle = () => {
         let style = { height: "5px", transition: "none", display: "" }
         currentMenu.isTabs ? style.display = "" : style.display = "none";
         return style;
     }
 
+    const tabTextHiddenStyle = () => {    
+        const style = {       
+            "& .Mui-selected": {
+                color: important(blue[100])
+            },
+            marginLeft: "auto"
+        };
+        if (!currentMenu.isTabs) {
+            return style;
+        } else {
+            return {marginLeft: "auto"}
+        }
+    }
+
     const tabs = (    
-        <React.Fragment>
+        <>
             <ThemeProvider theme={themeActiveTab}>
                 <Tabs
-                    sx={{ ml: "auto" }}
-                    value={tabState}
-                    textColor="primary"
-                    indicatorColor="primary"
-                    TabIndicatorProps={{ sx: indicatorHiddenStyle() }}
+                    sx={tabTextHiddenStyle}
+                    value={tabState}                    
+                    TabIndicatorProps={{ sx: tabIndicatorHiddenStyle() }}
             >
                 <Tab label="Домой" sx={tabStyle} href="/" />
                 <Tab
@@ -169,28 +194,30 @@ export default function Header() {
                     href="/estimate">Оценка</ColorButton>
 
             <Menu
-                id="serviceMenu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                MenuListProps={{
-                    onMouseEnter: handleHover,
-                    onMouseLeave: handleCloseHover,
-                    style: { pointerEvents: "auto" }
-                }}
-                anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-                sx={menuStyle.popOverRoot}
-                keepMounted
-                PaperProps={{
-                    sx: {
-                        backgroundColor: Theme.palette.common.blue,
-                        color: "white",
-                        borderRadius: "0px"
-                    }
-                }}
-                disableAutoFocusItem={true}
-            >
-                <MenuItem selected={selectedIndex === 0}
+                    id="serviceMenu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        onMouseEnter: handleHover,
+                        onMouseLeave: handleCloseHover,
+                        style: { pointerEvents: "auto" },
+                        disablePadding: true
+                    }}
+                    anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                    sx={menuStyle.popOverRoot}
+                    keepMounted
+                    PaperProps={{
+                        sx: {
+                            backgroundColor: Theme.palette.common.blue,
+                            color: "white",
+                            borderRadius: "0px"
+                        }
+                    }}
+                    disableAutoFocusItem
+                    transitionDuration={0}
+                >
+                <MenuItem selected={selectedIndex === 0 && currentMenu.tabNumber === 1} 
                     onClick={handleClose} component='a' href="/services">Сервисы</MenuItem>
                 <MenuItem selected={selectedIndex === 1}
                     onClick={handleClose} component='a' href="/customsoftware">ПО</MenuItem>
@@ -200,7 +227,7 @@ export default function Header() {
                     onClick={handleClose} component='a' href="/websites">Сайты</MenuItem>
             </Menu>
             </ThemeProvider>
-    </React.Fragment>
+    </>
     )
 
     const drawer = (
@@ -211,24 +238,31 @@ export default function Header() {
                 }}
                 onOpen={() => setOpenDrawer(true)}
             >
-                <List>
-                    <ListItem button component='a' href="/">
-                        <ListItemText>Домой</ListItemText>
+                <List disablePadding>
+                    <div style={drawerMargin()} ></div>
+                    <ListItem button component='a' href="/" divider
+                        selected={tabState === 0 && currentMenu.isTabs} disableRipple>
+                        <ListItemText disableTypography>Домой</ListItemText>
                     </ListItem>
-                    <ListItem button component='a' href="/services">
-                        <ListItemText>Сервисы</ListItemText>
+                    <ListItem button component='a' href="/services" divider
+                        selected={tabState === 1} disableRipple>
+                        <ListItemText disableTypography>Сервисы</ListItemText>
                     </ListItem>
-                    <ListItem button component='a' href="/revolution">
-                        <ListItemText>Революция</ListItemText>
+                    <ListItem button component='a' href="/revolution" divider
+                        selected={tabState === 2} disableRipple>
+                        <ListItemText disableTypography>Революция</ListItemText>
                     </ListItem>
-                    <ListItem button component='a' href="/about">
-                        <ListItemText>О нас</ListItemText>
+                    <ListItem button component='a' href="/about" divider
+                        selected={tabState === 3} disableRipple>
+                        <ListItemText disableTypography>О нас</ListItemText>
                     </ListItem>
-                    <ListItem button component='a' href="/contacts">
-                        <ListItemText>Контакты</ListItemText>
+                    <ListItem button component='a' href="/contacts" divider
+                        selected={tabState === 4} disableRipple>
+                        <ListItemText disableTypography>Контакты</ListItemText>
                     </ListItem>
-                    <ListItem button component='a' href="/estimate">
-                        <ListItemText>Оценка</ListItemText>
+                    <ListItem button component='a' href="/estimate" divider
+                        selected={!currentMenu.isTabs} disableRipple>
+                        <ListItemText disableTypography>Оценка</ListItemText>
                     </ListItem>
                 </List>
             </SwipeableDrawer>
@@ -240,7 +274,7 @@ export default function Header() {
 
     return (
         <>
-            <AppBar position="fixed" sx={logoStyle()}>
+            <AppBar position="fixed" sx={logoStyle}>
                 <Toolbar disableGutters style={{ minHeight: "0px" }}>
                     <Button href="/" style={logoContainer} disableRipple>
                         <img src={logo.toString()} alt="" style={logoStyle()} />

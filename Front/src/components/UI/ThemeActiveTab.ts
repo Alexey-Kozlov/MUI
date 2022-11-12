@@ -24,6 +24,15 @@ export default createTheme({
                     }
                 }
             }
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    '&.Mui-selected': {
+                        color:"white"
+                    }
+                }
+            }
         }
     }
 });

@@ -46,5 +46,23 @@ export default createTheme({
             fontSize: "1rem",
             textTransform: "none"
         }
+    },
+    components: {
+        MuiListItem: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: `${arcBlue}`,
+                    color: blue[100],
+                    "&.Mui-selected": {
+                        backgroundColor: blue[500],
+                        color: "white"
+                    },
+                    "&:hover": {
+                        backgroundColor: blue[500],
+                        color: "white"
+                    }
+                }
+            }
+        }
     }
 });
