@@ -7,6 +7,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './UI/Theme';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Stack } from '@mui/material';
+import Footer from './UI/Footer';
 
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
             <ThemeProvider theme={theme}>
                 <Header />
                 <Routes>
-                    <Route path="/" element={<Stack sx={{ mt: "90px" }} >Домой</Stack>} />
+                    <Route path="/" element={<Stack sx={{ mt: "90px", height:"500px" }} >Домой</Stack>} />
                     <Route path="/services" element={<Stack sx={{ mt: "90px" }} >Сервисы</Stack>} />
                     <Route path="/customsoftware" element={<Stack sx={{ mt: "90px" }} >ПО</Stack>} />
                     <Route path="/mobileapps" element={<Stack sx={{ mt: "90px" }} >Мобильное приложение</Stack>} />
@@ -25,6 +26,7 @@ function App() {
                     <Route path="/contacts" element={<Stack sx={{ mt: "90px" }} >Контакты</Stack>} />
                     <Route path="/estimate" element={<Stack sx={{ mt: "90px" }} >Оценка</Stack>} />
                 </Routes>
+                <Footer />
             </ThemeProvider>
         </BrowserRouter>
     );
