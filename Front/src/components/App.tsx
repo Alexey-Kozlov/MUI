@@ -16,7 +16,7 @@ function App() {
             <ThemeProvider theme={theme}>
                 <Header />
                 <Routes>
-                    <Route path="/" element={<Stack sx={{ mt: "90px", height:"500px" }} >Домой</Stack>} />
+                    <Route path="/" element={<Stack sx={{ mt: "90px" }} >Домой</Stack>} />
                     <Route path="/services" element={<Stack sx={{ mt: "90px" }} >Сервисы</Stack>} />
                     <Route path="/customsoftware" element={<Stack sx={{ mt: "90px" }} >ПО</Stack>} />
                     <Route path="/mobileapps" element={<Stack sx={{ mt: "90px" }} >Мобильное приложение</Stack>} />
